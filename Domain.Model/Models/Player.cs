@@ -20,6 +20,8 @@ namespace Casino.Core.Models
 
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<Bet> Bets { get; set; }
+        public ICollection<PlayerBonus> PlayerBonuses { get; set; } = new List<PlayerBonus>();
+
 
         public Player() { }
 

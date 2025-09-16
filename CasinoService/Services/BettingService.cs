@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Casino.Core.Interfaces.IRepositories;
+﻿using Casino.Core.Interfaces.IRepositories;
 using Casino.Core.Interfaces.IServices;
 using Casino.Core.Models;
 
@@ -15,7 +10,7 @@ namespace CasinoService.Services
         private readonly IPlayerRepository playerRepository;
         private readonly IWalletService walletService;
         private readonly IWalletRepository walletRepository;
-
+        private static readonly Random _random = new Random();
         public BettingService(IBetRepository repository, IPlayerRepository playerrep, IWalletService service)
         {
             this.repository = repository;
@@ -34,11 +29,11 @@ namespace CasinoService.Services
 
             await walletService.CashOut(player_id, amount);
 
-            Random random = new Random();
-            decimal coefficent = random.Next(2, 4);
+           
+            decimal coefficent = _random.Next(2, 5);
 
-            Random rand = new Random();
-            bool isWon = rand.Next(0, 2) == 0;
+
+            bool isWon = _random.Next(0, 2) == 1;
 
             var bet = new Bet
             {
