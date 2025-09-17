@@ -28,6 +28,7 @@ namespace MyCasino
 
             builder.Services.AddScoped<IWalletService, WalletService>();
             builder.Services.AddScoped<IBetService, BettingService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IPlayerBonusRepository, PlayerBonusRepository>();
 
             
