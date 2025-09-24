@@ -11,20 +11,22 @@ namespace CasinoService.Services
 {
     public class UserService : IUserService
     {
-        private readonly IBetRepository repository;
-        private readonly IPlayerRepository playerRepository;
-        private readonly IWalletRepository walletRepository;
+        private readonly IRepository<Bet> repository;
+        private readonly IRepository<Player> playerRepository;
+        private readonly IRepository<Wallet> walletRepository;
+        private readonly IPlayerRepository player;
 
-        public UserService(IBetRepository repository, IPlayerRepository playerRepository,IWalletRepository walletRepository)
+        public UserService(IRepository<Bet> repository, IRepository<Player> playerRepository,IRepository<Wallet> walletRepository,IPlayerRepository rep)
         {
             this.repository = repository;
             this.playerRepository = playerRepository;
             this.walletRepository = walletRepository;
+            this.player = rep;
         }
 
         public async Task<Player> GetPlayer(int id)
         {
-            var player = await playerRepository.GetPlayer(id);
+            var player = await playerRepository.Get(id);
             if (player == null)
             {
                 throw new Exception("Player not found");
@@ -33,18 +35,24 @@ namespace CasinoService.Services
             return player;
         }
 
-        public async Task<IEnumerable<Player>> GetPlayers()
-        {
-            return await playerRepository.GetPlayers();
-        }
-
         public async Task<Player> AddPlayer(Player player)
         {
-            await playerRepository.AddPlayer(player);
+            await playerRepository.Create(player);
             var wallet = new Wallet { PlayerId = player.Id, Balance = 0 };
-            await walletRepository.Add(wallet);     
+            await walletRepository.Create(wallet);     
             player.Wallet = wallet;                   
             return player;
+        }
+
+
+        public async Task<List<Player?>> GetRichPlayers()
+        {
+            return await player.GetRichPlayers();
+        }
+
+        public async Task Delete(int id)
+        {
+            await playerRepository.Delete(id);
         }
     }
 }

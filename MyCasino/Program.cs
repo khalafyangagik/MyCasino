@@ -5,6 +5,10 @@ using Casino.Core.Interfaces.IRepositories;
 using Casino.Core.Interfaces.IServices;
 using Data.Repositories;
 using CasinoService.Services;
+using Casino.Core.Models;
+using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using Shared;
 
 namespace MyCasino
 {
@@ -14,17 +18,20 @@ namespace MyCasino
         {
             var builder = WebApplication.CreateBuilder(args);
 
-    
 
+            builder.Services.AddAutoMapper(typeof(PlayerProfile).Assembly);
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddControllers();
             builder.Services.AddDbContext<CasinoDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 
-            builder.Services.AddScoped<IBetRepository, BetRepository>();
+            builder.Services.AddScoped<IRepository<Bet>, BetRepository>();
+            builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
+            builder.Services.AddScoped<IRepository<Wallet>, WalletRepository>();
             builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
-            builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+            builder.Services.AddScoped<IBetRepository, BetRepository>();
 
             builder.Services.AddScoped<IWalletService, WalletService>();
             builder.Services.AddScoped<IBetService, BettingService>();
@@ -36,6 +43,7 @@ namespace MyCasino
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
 
             var app = builder.Build();
 

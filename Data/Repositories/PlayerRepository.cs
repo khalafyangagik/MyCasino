@@ -10,34 +10,46 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
-    public class PlayerRepository : IPlayerRepository
+    public class PlayerRepository : IRepository<Player>, IPlayerRepository
     {
-        private CasinoDbContext _context {  get; set; } 
+        private CasinoDbContext _context {  get; set; }
         public PlayerRepository(CasinoDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddPlayer(Player player)
+        public async Task Create(Player player)
         {
             await _context.Players.AddAsync(player);
             await _context.SaveChangesAsync(); 
         }
 
-        public async Task<Player> GetPlayer(int id)
+        public async Task<Player> Get(int id)
         {
             return await _context.Players.FindAsync(id);
         }
 
-        public async Task<IEnumerable<Player>> GetPlayers()
+        public async Task Delete(int id)
         {
-            return await _context.Players.ToListAsync();
-        }
+            var player = await _context.Players.FindAsync(id);
+            if(player == null)
+            {
+                throw new NullReferenceException(nameof(player));
+            }
 
-        public async Task DeletePlayer(Player player)
-        {
             _context.Players.Remove(player);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task Update(Player player)
+        {
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Player?>> GetRichPlayers()
+        {
+            return await _context.Players.Include(x => x.Wallet).Where(x => x.Wallet != null && x.Wallet.Balance > 10000).ToListAsync();
         }
     }
 }

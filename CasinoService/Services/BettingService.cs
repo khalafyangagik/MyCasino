@@ -6,22 +6,24 @@ namespace CasinoService.Services
 {
     public class BettingService : IBetService
     {
-        private readonly IBetRepository repository;
-        private readonly IPlayerRepository playerRepository;
+        private readonly IRepository<Bet> repository;
+        private readonly IRepository<Player> playerRepository;
         private readonly IWalletService walletService;
-        private readonly IWalletRepository walletRepository;
+        private readonly IRepository<Wallet> walletRepository;
+        private readonly IBetRepository betRepo;
         private static readonly Random _random = new Random();
-        public BettingService(IBetRepository repository, IPlayerRepository playerrep, IWalletService service)
+        public BettingService(IRepository<Bet> repository, IRepository<Player> playerrep, IWalletService service,IBetRepository repo)
         {
             this.repository = repository;
             playerRepository = playerrep;
             walletService = service;
+            betRepo = repo;
 
         }
 
         public async Task<Bet> PlaceBetAsync(string gamename, int player_id, decimal amount)
         {
-            var player = await playerRepository.GetPlayer(player_id);
+            var player = await playerRepository.Get(player_id);
             if (player == null)
             {
                 throw new Exception("Player not found");
@@ -29,7 +31,7 @@ namespace CasinoService.Services
 
             await walletService.CashOut(player_id, amount);
 
-           
+
             decimal coefficent = _random.Next(2, 5);
 
 
@@ -51,9 +53,15 @@ namespace CasinoService.Services
 
             }
 
-            await repository.AddBet(bet);
+            await repository.Create(bet);
             return bet;
+        }
+
+            public async Task<IList<Bet>> GetAllBets(int userId)
+            {
+               return await betRepo.GetAllBets(userId);
+            }
 
         }
     }
-}
+

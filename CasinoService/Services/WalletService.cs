@@ -11,11 +11,11 @@ namespace CasinoService.Services
 {
     public class WalletService : IWalletService
     {
-        private readonly IBetRepository repository;
-        private readonly IPlayerRepository playerRepository;
-        private readonly IWalletRepository walletRepository;
+        private readonly IRepository<Bet> repository;
+        private readonly IRepository<Player> playerRepository;
+        private readonly IRepository<Wallet> walletRepository;
 
-        public WalletService(IBetRepository repository, IPlayerRepository playerRepository, IWalletRepository walletRepository)
+        public WalletService(IRepository<Bet> repository, IRepository<Player> playerRepository, IRepository<Wallet> walletRepository)
         {
             this.repository = repository;
             this.playerRepository = playerRepository;
@@ -24,7 +24,7 @@ namespace CasinoService.Services
 
         public async Task<decimal> CashOut(int id, decimal money)
         {
-            var wallet = await walletRepository.GetById(id);
+            var wallet = await walletRepository.Get(id);
             if (wallet == null)
             {
                 throw new Exception("Wallet not found");
@@ -44,7 +44,7 @@ namespace CasinoService.Services
 
         public async Task<Wallet> GetWallet(int id)
         {
-            var wallet = await walletRepository.GetById(id);
+            var wallet = await walletRepository.Get(id);
             if (wallet == null)
             {
                 throw new Exception("Wallet not found");
@@ -55,7 +55,7 @@ namespace CasinoService.Services
 
         public async Task<decimal> TopUpWallet(int id, decimal money)
         {
-            var wallet = await walletRepository.GetById(id);
+            var wallet = await walletRepository.Get(id);
             if (wallet == null)
             {
                 throw new Exception("Wallet not found");

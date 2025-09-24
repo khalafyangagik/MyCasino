@@ -9,7 +9,7 @@ using Data.DbContextFile;
 
 namespace Data.Repositories
 {
-    public class WalletRepository : IWalletRepository
+    public class WalletRepository :IRepository<Wallet>
     {
         private CasinoDbContext _context;
         public WalletRepository(CasinoDbContext context)
@@ -17,19 +17,25 @@ namespace Data.Repositories
             _context = context;
         }
 
-        public async Task Add(Wallet wallet)
+        public async Task Create(Wallet wallet)
         {
             await _context.Wallets.AddAsync(wallet);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Wallet wallet)
+        public async Task Delete(int id)
         {
+            var wallet = await _context.Wallets.FindAsync(id);
+            if (wallet == null)
+            {
+                throw new Exception();
+            }
+
             _context.Remove(wallet);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Wallet> GetById(int id)
+        public async Task<Wallet> Get(int id)
         {
             return await _context.Wallets.FindAsync(id);  
         }

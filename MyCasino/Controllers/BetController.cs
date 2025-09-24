@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CasinoService; // namespace, որտեղ IBetService է
+﻿using Casino.Core.Interfaces.IServices;
 using Casino.Core.Models;
-using Casino.Core.Interfaces.IServices;
-using Shared.DTOs;   // Bet, Player models
+using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs;  
 
 namespace MyCasino.Controllers
 {
@@ -37,6 +36,14 @@ namespace MyCasino.Controllers
             };
 
             return Ok(dto);
+        }
+
+        [HttpGet("user bets")]
+
+        public async Task<ActionResult<IList<Bet>>> GetAllBet(int id)
+        {
+           var bets = await _betService.GetAllBets(id);
+           return Ok(bets);
         }
 
      

@@ -9,9 +9,6 @@ namespace Casino.Core.Interfaces.IRepositories
 {
     public interface IPlayerRepository
     {
-        Task AddPlayer(Player player);
-        Task<Player> GetPlayer(int id);
-        Task<IEnumerable<Player>> GetPlayers();
-        Task DeletePlayer(Player player);
+        Task<List<Player?>> GetRichPlayers();
     }
 }
